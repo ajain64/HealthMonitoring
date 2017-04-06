@@ -36,7 +36,7 @@
  *
  * Copyright (C) 2017 Nulana LTD. All Rights Reserved.
  */
- 
+
 package hello.healthmonitoring;
 
 import android.app.Activity;
@@ -114,43 +114,80 @@ public class ChartingDemoActivity extends Activity implements NChartSeriesDataSo
 
             Log.d("ok1", "print");
 
-        SQLiteDatabase database = SQLiteDatabase.openDatabase(_trainingDB, null, SQLiteDatabase.OPEN_READONLY);
-        Cursor cursor = database.query(
-                "group3activitydb",     // The table name
-                new String[] {"timeStamp, xValue, yValue", "zValue", "label"},
-                null,//"label = 0",            // The WHERE clause
-                null,
-                null,
-                null,
-                "label, timestamp"//, yValue, xValue, zValue"        // Can put sort order here, e.g. "timeStamp DESC"
-        );
+            SQLiteDatabase database = SQLiteDatabase.openDatabase(_trainingDB, null, SQLiteDatabase.OPEN_READONLY);
 
-        int item = 0;
+            //---------------------------- LABEL = 0 -----------------------------//
+            Cursor cursor = database.query(
+                    "group3activitydb",     // The table name
+                    new String[] {"timeStamp, xValue, yValue", "zValue", "label"},
+                    "label = 0",            // The WHERE clause
+                    null,
+                    null,
+                    null,
+                    "yValue, xValue, zValue"        // Can put sort order here, e.g. "timeStamp DESC"
+            );
 
-        while (cursor.moveToNext())
-        {
-            if (item == 300){}
-                //break;
+            while (cursor.moveToNext())
+            {
+                float[] coordinates = new float[3];
+                coordinates[0] = cursor.getFloat(cursor.getColumnIndex("xValue"));
+                coordinates[1] = cursor.getFloat(cursor.getColumnIndex("yValue"));
+                coordinates[2] = cursor.getFloat(cursor.getColumnIndex("zValue"));
 
-            float[] coordinates = new float[3];
-            coordinates[0] = cursor.getFloat(cursor.getColumnIndex("xValue"));
-            coordinates[1] = cursor.getFloat(cursor.getColumnIndex("yValue"));
-            coordinates[2] = cursor.getFloat(cursor.getColumnIndex("zValue"));
+                lines.add(coordinates);
+            }
 
-            lines.add(coordinates);
-
-
-            item++;
-
-        }
-
-            Log.d("ok",Integer.toString(item));
+            cursor.close();
 
 
 
+            //---------------------------- LABEL = 1 -----------------------------//
+            cursor = database.query(
+                    "group3activitydb",     // The table name
+                    new String[] {"timeStamp, xValue, yValue", "zValue", "label"},
+                    "label = 1",            // The WHERE clause
+                    null,
+                    null,
+                    null,
+                    "yValue, xValue, zValue"        // Can put sort order here, e.g. "timeStamp DESC"
+            );
 
 
-        cursor.close();
+            while (cursor.moveToNext())
+            {
+                float[] coordinates = new float[3];
+                coordinates[0] = cursor.getFloat(cursor.getColumnIndex("xValue"));
+                coordinates[1] = cursor.getFloat(cursor.getColumnIndex("yValue"));
+                coordinates[2] = cursor.getFloat(cursor.getColumnIndex("zValue"));
+
+                lines.add(coordinates);
+            }
+
+            cursor.close();
+
+
+            //---------------------------- LABEL = 2 -----------------------------//
+            cursor = database.query(
+                    "group3activitydb",     // The table name
+                    new String[] {"timeStamp, xValue, yValue", "zValue", "label"},
+                    "label = 2",            // The WHERE clause
+                    null,
+                    null,
+                    null,
+                    "yValue, xValue, zValue"        // Can put sort order here, e.g. "timeStamp DESC"
+            );
+
+            while (cursor.moveToNext())
+            {
+                float[] coordinates = new float[3];
+                coordinates[0] = cursor.getFloat(cursor.getColumnIndex("xValue"));
+                coordinates[1] = cursor.getFloat(cursor.getColumnIndex("yValue"));
+                coordinates[2] = cursor.getFloat(cursor.getColumnIndex("zValue"));
+
+                lines.add(coordinates);
+            }
+
+            cursor.close();
         }
         catch (IOException ex) {
 
@@ -214,12 +251,12 @@ public class ChartingDemoActivity extends Activity implements NChartSeriesDataSo
             //series.tag = i;
             //series.setBrush(brushes[i]);
             //series.setLineThickness(3.0f);
-            if (i < 60)
+            if (i >= 40 && i < 60)
                 series.setBrush(new NChartSolidColorBrush(Color.argb(255, 97, 205, 232)));
-            if (i < 40)
-                series.setBrush(new NChartSolidColorBrush(Color.argb(0, 97, 205, 232)));
+            if (i >= 20 && i < 40)
+                series.setBrush(new NChartSolidColorBrush(Color.argb(0, 97, 28, 132)));
             if (i < 20)
-                series.setBrush(new NChartSolidColorBrush(Color.argb(255, 0, 205, 232)));
+                series.setBrush(new NChartSolidColorBrush(Color.argb(255, 0, 135, 32)));
             mNChartView.getChart().addSeries(series);
 
         }
@@ -231,7 +268,7 @@ public class ChartingDemoActivity extends Activity implements NChartSeriesDataSo
 
 
         for (int i = nextLine; i < nextLine+100; ++i)
-        //for (int i = 0; i < 60; i++)
+            //for (int i = 0; i < 60; i++)
             result.add(new NChartPoint(NChartPointState.PointStateWithXYZ(lines.get(i)[0],lines.get(i)[1],lines.get(i)[2]), series));
         //result.add(new NChartPoint());
 
@@ -251,7 +288,7 @@ public class ChartingDemoActivity extends Activity implements NChartSeriesDataSo
     public String name(NChartValueAxis nChartValueAxis) {
         return null;
     }
-    
+
     public NChartPoint[] extraPoints(NChartSeries series) {
         return null;
     }
